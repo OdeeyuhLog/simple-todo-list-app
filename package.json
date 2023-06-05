@@ -1,0 +1,39 @@
+{
+    "name": "simple-todo-list-app",
+    "version": "1.0.0",
+    "description": "",
+    "private": true,
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack",
+        "watch": "webpack --watch",
+        "start": "webpack serve --open"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/OdeeyuhLog/simple-todo-list-app.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/OdeeyuhLog/simple-todo-list-app/issues"
+    },
+    "homepage": "https://github.com/OdeeyuhLog/simple-todo-list-app#readme",
+    "devDependencies": {
+        "css-loader": "^6.8.1",
+        "eslint": "^8.42.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-plugin-import": "^2.27.5",
+        "html-webpack-plugin": "^5.5.1",
+        "mini-css-extract-plugin": "^2.7.6",
+        "sass": "^1.62.1",
+        "sass-loader": "^13.3.1",
+        "style-loader": "^3.3.3",
+        "webpack": "^5.84.1",
+        "webpack-cli": "^5.1.1",
+        "webpack-dev-server": "^4.15.0"
+    },
+    "dependencies": {
+        "eslint-config-prettier": "^8.8.0"
+    }
+}
