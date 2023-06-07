@@ -51,7 +51,7 @@ export default function renderApp() {
             renderProjects();
         });
 
-        renderTasks();
+        renderMain();
     }
 
     function renderProjects() {
@@ -64,12 +64,16 @@ export default function renderApp() {
         });
     }
 
-    function renderTasks() {
+    function renderMain() {
+        const taskContainer = document.querySelector("#content");
         const projectContainer = document.getElementById("show-projects");
-        const tasksContainer = document.getElementById("content");
         projectContainer.addEventListener("click", (e) => {
             if (e.target && e.target.matches("div.project-card")) {
-                e.value;
+                taskContainer.innerHTML = `<h2 id="list-header">${
+                    projects[e.target.dataset.value].name
+                }</h2>
+        <button id="create-task">+ Add Task</button>
+        <div id="render-tasks"></div>`;
             }
         });
     }
