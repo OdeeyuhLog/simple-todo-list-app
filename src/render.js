@@ -1,4 +1,5 @@
 import createProject from "./project";
+import "./style.scss";
 
 export default function renderApp() {
     const projects = [];
@@ -9,7 +10,7 @@ export default function renderApp() {
 
     function renderHome() {
         const main = document.querySelector("body");
-        main.innerHTML += `<div id="container">
+        main.innerHTML += ` <div id="container">
         <div id="side-bar">
             <div id="primary-buttons">
                 <button class="side-bar-button" data-type="inbox">
@@ -24,9 +25,15 @@ export default function renderApp() {
                 <div id="task-header">
                     <h2>Projects</h2>
                     <button id="create-project">+</button>
-                    <input type="text" id="project-name-input" />
+                    <div id="input-project" class="hide">
+                        <input type="text" id="project-name-input" />
+                        <button id="add-project">✓</button
+                        ><button id="cancel-input">X</button>
+                    </div>
                 </div>
-                <div id="show-projects"></div>
+                <div id="show-projects">
+                    <div class="project-card"></div>
+                </div>
             </div>
         </div>
         <div id="content">
@@ -42,16 +49,30 @@ export default function renderApp() {
             element.addEventListener("click", () => {});
         });
 
-        const addProjectBtn = document.getElementById("create-project");
+        displayProjectInput();
+        renderMain();
+    }
+
+    function displayProjectInput() {
+        const showProjectInput = document.getElementById("create-project");
         const projectNameInput = document.getElementById("project-name-input");
+        const addProjectBtn = document.getElementById("add-project");
+        const cancelBtn = document.getElementById("cancel-input");
+        const inputContainer = document.getElementById("input-project");
+
+        [showProjectInput, cancelBtn, addProjectBtn].forEach((element) => {
+            element.addEventListener("click", () => {
+                projectNameInput.textContent = "";
+                inputContainer.classList.toggle("hide");
+            });
+        });
+
         addProjectBtn.addEventListener("click", () => {
             if (projectNameInput.value === "") return;
             addProject(projectNameInput.value);
             projectNameInput.value = "";
             renderProjects();
         });
-
-        renderMain();
     }
 
     function renderProjects() {
@@ -65,18 +86,24 @@ export default function renderApp() {
     }
 
     function renderMain() {
-        const taskContainer = document.querySelector("#content");
+        const taskPage = document.querySelector("#content");
         const projectContainer = document.getElementById("show-projects");
         projectContainer.addEventListener("click", (e) => {
             if (e.target && e.target.matches("div.project-card")) {
-                taskContainer.innerHTML = `<h2 id="list-header">${
+                taskPage.innerHTML = `<h2 id="list-header">${
                     projects[e.target.dataset.value].name
                 }</h2>
         <button id="create-task">+ Add Task</button>
         <div id="render-tasks"></div>`;
             }
+            // renderTasks(projects[e.target.dataset.value].tasks);
         });
     }
+
+    // function renderTasks(tasks) {
+    //     const taskContainer = document.getElementById("render-tasks");
+    //     tasks.forEach((task) => {});
+    // }
 
     return {
         init() {
