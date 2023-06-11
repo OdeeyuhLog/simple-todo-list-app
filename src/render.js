@@ -134,25 +134,41 @@ export default function renderApp() {
         </div>`;
             accumulator += 1;
         });
-        editProject();
-        deleteProject();
+        handleEditButton();
+        handleDeleteButton();
     }
 
-    function editProject() {
+    function handleEditButton() {
         const projectContainer = document.getElementById("show-projects");
         projectContainer.addEventListener("click", (e) => {
             if (e.target.closest("div.project-card button.edit-button")) {
-                e.target.closest(
-                    ".project-card"
-                ).innerHTML = `<input type="text" name="" id="project-name-input" value="${
-                    projects[e.target.closest(".project-card").dataset.value]
-                        .name
-                }" /><button class="edit-project-name">✓</button>`;
+                const projectCard = e.target.closest(".project-card");
+                const projectNameInput = document.createElement("input");
+                projectNameInput.type = "text";
+                projectNameInput.name = "project-name-input";
+                projectNameInput.value =
+                    projects[projectCard.dataset.value].name;
+
+                const saveButton = document.createElement("button");
+                saveButton.className = "edit-project-name";
+                saveButton.innerText = "✓";
+
+                saveButton.addEventListener("click", () => {
+                    const updatedProjectName = projectNameInput.value;
+                    // Perform the desired action with the updated project name, such as saving it to a database or updating the UI.
+                    projects[projectCard.dataset.value].name =
+                        updatedProjectName;
+                    renderProjects();
+                });
+
+                projectCard.innerHTML = ""; // Clear existing content
+                projectCard.appendChild(projectNameInput);
+                projectCard.appendChild(saveButton);
             }
         });
     }
 
-    function deleteProject() {
+    function handleDeleteButton() {
         const projectContainer = document.getElementById("show-projects");
         projectContainer.addEventListener("click", (e) => {
             if (e.target && e.target.closest("button.delete-project")) {
