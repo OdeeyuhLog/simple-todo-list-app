@@ -1,4 +1,5 @@
 import createProject from "./project";
+import createTask from "./task";
 import "./style.scss";
 
 export default function renderApp() {
@@ -50,7 +51,7 @@ export default function renderApp() {
         });
 
         displayProjectInput();
-        renderMain();
+        handleProjectButtonsClick();
     }
 
     function displayProjectInput() {
@@ -72,6 +73,13 @@ export default function renderApp() {
             addProject(projectNameInput.value);
             projectNameInput.value = "";
             renderProjects();
+        });
+
+        projectNameInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                addProjectBtn.click();
+            }
         });
     }
 
@@ -180,25 +188,160 @@ export default function renderApp() {
         });
     }
 
-    function renderMain() {
+    function handleProjectButtonsClick() {
         const taskPage = document.querySelector("#content");
         const projectContainer = document.getElementById("show-projects");
         projectContainer.addEventListener("click", (e) => {
             if (e.target && e.target.matches("div.project-card")) {
-                taskPage.innerHTML = `<h2 id="list-header">${
-                    projects[e.target.dataset.value].name
-                }</h2>
-        <button id="create-task">+ Add Task</button>
-        <div id="render-tasks"></div>`;
+                taskPage.innerHTML = "";
+                const projectIndex = e.target.dataset.value;
+
+                // Create <h2> element
+                const listHeader = document.createElement("h2");
+                listHeader.id = "list-header";
+                listHeader.textContent = projects[e.target.dataset.value].name;
+                taskPage.appendChild(listHeader);
+
+                // Create <form> element
+                const taskInputForm = document.createElement("form");
+                taskInputForm.action = "";
+                taskInputForm.id = "task-input-form";
+                taskPage.appendChild(taskInputForm);
+
+                // Create task name input
+                const taskNameInput = document.createElement("input");
+                taskNameInput.type = "text";
+                taskNameInput.id = "task-name-input";
+                taskInputForm.appendChild(taskNameInput);
+
+                // Create task date input
+                const taskDateInput = document.createElement("input");
+                taskDateInput.type = "date";
+                taskInputForm.appendChild(taskDateInput);
+
+                // Create priority select
+                const prioritySelect = document.createElement("select");
+                taskInputForm.appendChild(prioritySelect);
+
+                // Create select options
+                const selectOptions = [
+                    {
+                        value: "",
+                        text: "--Select Priority--",
+                        selected: true,
+                        disabled: true,
+                    },
+                    { value: "low", text: "Low" },
+                    { value: "medium", text: "Medium" },
+                    { value: "high", text: "High" },
+                ];
+
+                selectOptions.forEach((option) => {
+                    const selectOption = document.createElement("option");
+                    selectOption.value = option.value;
+                    selectOption.textContent = option.text;
+                    selectOption.selected = option.selected;
+                    selectOption.disabled = option.disabled;
+                    prioritySelect.appendChild(selectOption);
+                });
+
+                const submitButton = document.createElement("input");
+                submitButton.type = "submit";
+                submitButton.id = "add-task-button";
+                submitButton.value = " + Add Task";
+                taskInputForm.appendChild(submitButton);
+
+                // Create <div> for rendering tasks
+                const renderTasksContainer = document.createElement("div");
+                renderTasksContainer.id = "render-tasks";
+                taskPage.appendChild(renderTasksContainer);
+
+                taskInputForm.addEventListener("submit", (inputEvent) => {
+                    inputEvent.preventDefault();
+                    const taskName = taskNameInput.value;
+                    const taskDate = taskDateInput.value;
+                    const taskPriority = prioritySelect.value;
+
+                    const taskObject = createTask(
+                        taskName,
+                        taskDate,
+                        taskPriority
+                    );
+
+                    projects[e.target.dataset.value].addTask(taskObject);
+                    renderTasks(e.target.dataset.value);
+                });
             }
-            // renderTasks(projects[e.target.dataset.value].tasks);
         });
     }
 
-    // function renderTasks(tasks) {
-    //     const taskContainer = document.getElementById("render-tasks");
-    //     tasks.forEach((task) => {});
-    // }
+    function renderTasks(index) {
+        const taskContainer = document.getElementById("render-tasks");
+        const tasksArr = projects[index].tasks;
+        taskContainer.innerHTML = "";
+
+        tasksArr.forEach((task) => {
+            const taskCard = document.createElement("div");
+            taskCard.className = "task-card";
+
+            const statusCheckbox = document.createElement("input");
+            statusCheckbox.type = "checkbox";
+            statusCheckbox.name = "status-checkbox";
+            taskCard.appendChild(statusCheckbox);
+
+            const taskName = document.createElement("p");
+            taskName.className = "task-name";
+            taskName.textContent = task.name;
+            taskCard.appendChild(taskName);
+
+            const taskDate = document.createElement("p");
+            taskDate.className = "task-date";
+            taskDate.textContent = task.deadline;
+            taskCard.appendChild(taskDate);
+
+            const manageTaskControls = document.createElement("div");
+            manageTaskControls.className = "manage-task-controls";
+            taskCard.appendChild(manageTaskControls);
+
+            const taskEditButton = document.createElement("button");
+            taskEditButton.className = "task-edit-button";
+            taskEditButton.innerHTML = `<svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M17.204 10.796L19 9C19.5453 8.45475 19.8179 8.18213 19.9636 7.88803C20.2409 7.32848 20.2409 6.67152 19.9636 6.11197C19.8179 5.81788 19.5453 5.54525 19 5C18.4548 4.45475 18.1821 4.18213 17.888 4.03639C17.3285 3.75911 16.6715 3.75911 16.112 4.03639C15.8179 4.18213 15.5453 4.45475 15 5L13.1814 6.81866C14.1452 8.46926 15.5314 9.84482 17.204 10.796ZM11.7269 8.27311L4.8564 15.1436C4.43134 15.5687 4.21881 15.7812 4.07907 16.0423C3.93934 16.3034 3.88039 16.5981 3.7625 17.1876L3.1471 20.2646C3.08058 20.5972 3.04732 20.7635 3.14193 20.8581C3.23654 20.9527 3.40284 20.9194 3.73545 20.8529L6.81243 20.2375C7.40189 20.1196 7.69661 20.0607 7.95771 19.9209C8.21881 19.7812 8.43134 19.5687 8.8564 19.1436L15.7458 12.2542C14.1241 11.2386 12.7524 9.87627 11.7269 8.27311Z"
+                fill="#222222"
+            />
+        </svg>`;
+            manageTaskControls.appendChild(taskEditButton);
+
+            const taskDeleteButton = document.createElement("button");
+            taskDeleteButton.className = "task-delete-button";
+            taskDeleteButton.innerHTML = `<svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM12 13.4142L8.70711 16.7071L7.29289 15.2929L10.5858 12L7.29289 8.70711L8.70711 7.29289L12 10.5858L15.2929 7.29289L16.7071 8.70711L13.4142 12L16.7071 15.2929L15.2929 16.7071L12 13.4142Z"
+                fill="#222222"
+            />
+        </svg>`;
+            manageTaskControls.appendChild(taskDeleteButton);
+
+            taskContainer.append(taskCard);
+        });
+    }
 
     return {
         init() {

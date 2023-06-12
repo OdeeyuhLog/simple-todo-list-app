@@ -14,5 +14,9 @@ export default function createProject(name) {
         get tasks() {
             return tasks;
         },
+
+        addTask(task) {
+            tasks.push(task);
+        },
     };
 }
