@@ -18,5 +18,9 @@ export default function createProject(name) {
         addTask(task) {
             tasks.push(task);
         },
+
+        deleteTask(index) {
+            tasks.splice(index, 1);
+        },
     };
 }

@@ -194,7 +194,6 @@ export default function renderApp() {
         projectContainer.addEventListener("click", (e) => {
             if (e.target && e.target.matches("div.project-card")) {
                 taskPage.innerHTML = "";
-                const projectIndex = e.target.dataset.value;
 
                 // Create <h2> element
                 const listHeader = document.createElement("h2");
@@ -226,7 +225,7 @@ export default function renderApp() {
                 // Create select options
                 const selectOptions = [
                     {
-                        value: "",
+                        value: "default",
                         text: "--Select Priority--",
                         selected: true,
                         disabled: true,
@@ -270,7 +269,11 @@ export default function renderApp() {
 
                     projects[e.target.dataset.value].addTask(taskObject);
                     renderTasks(e.target.dataset.value);
+                    taskInputForm.reset();
+                    prioritySelect.value = "default";
                 });
+
+                renderTasks(e.target.dataset.value);
             }
         });
     }
@@ -279,10 +282,12 @@ export default function renderApp() {
         const taskContainer = document.getElementById("render-tasks");
         const tasksArr = projects[index].tasks;
         taskContainer.innerHTML = "";
+        let accumulator = 0;
 
         tasksArr.forEach((task) => {
             const taskCard = document.createElement("div");
             taskCard.className = "task-card";
+            taskCard.dataset.value = accumulator;
 
             const statusCheckbox = document.createElement("input");
             statusCheckbox.type = "checkbox";
@@ -340,6 +345,95 @@ export default function renderApp() {
             manageTaskControls.appendChild(taskDeleteButton);
 
             taskContainer.append(taskCard);
+            accumulator += 1;
+
+            handleTaskDeleteButton(index);
+            handleTaskEditButton(index);
+        });
+    }
+
+    function handleTaskDeleteButton(index) {
+        const taskContainer = document.getElementById("render-tasks");
+        taskContainer.addEventListener("click", (e) => {
+            if (e.target && e.target.closest("button.task-delete-button")) {
+                const taskIndex =
+                    e.target.closest("div.task-card").dataset.value;
+                projects[index].deleteTask(taskIndex);
+                renderTasks(index);
+            }
+        });
+    }
+
+    function handleTaskEditButton(index) {
+        const taskContainer = document.getElementById("render-tasks");
+        taskContainer.addEventListener("click", (e) => {
+            if (
+                e.target &&
+                e.target.closest("div.task-card button.task-edit-button")
+            ) {
+                const taskDetailsCard = e.target.closest(
+                    " div#render-tasks div.task-card"
+                );
+                const taskIndex = taskDetailsCard.dataset.value;
+                taskDetailsCard.innerHTML = "";
+
+                const newTaskForm = document.createElement("form");
+                newTaskForm.action = "";
+                newTaskForm.className = "newTaskDataInput";
+
+                const taskNameInput = document.createElement("input");
+                taskNameInput.type = "text";
+                taskNameInput.className = "new-task-name-input";
+                taskNameInput.value = projects[index].tasks[taskIndex].name;
+                newTaskForm.appendChild(taskNameInput);
+
+                const taskDateInput = document.createElement("input");
+                taskDateInput.type = "date";
+                taskDateInput.name = "newDateInput";
+                taskDateInput.className = "new-task-date-input";
+                taskDateInput.value = projects[index].tasks[taskIndex].deadline;
+                newTaskForm.appendChild(taskDateInput);
+
+                const taskPriorityInput = document.createElement("select");
+                taskPriorityInput.name = "newPriorityInput";
+                taskPriorityInput.className = "new-task-priority-input";
+                taskPriorityInput.value =
+                    projects[index].tasks[taskIndex].priority;
+
+                const priorityOption2 = document.createElement("option");
+                priorityOption2.value = "low";
+                priorityOption2.textContent = "Low";
+                taskPriorityInput.appendChild(priorityOption2);
+
+                const priorityOption3 = document.createElement("option");
+                priorityOption3.value = "medium";
+                priorityOption3.textContent = "Medium";
+                taskPriorityInput.appendChild(priorityOption3);
+
+                const priorityOption4 = document.createElement("option");
+                priorityOption4.value = "high";
+                priorityOption4.textContent = "High";
+                taskPriorityInput.appendChild(priorityOption4);
+
+                newTaskForm.appendChild(taskPriorityInput);
+
+                const submitButton = document.createElement("input");
+                submitButton.type = "submit";
+                submitButton.value = "Save";
+                newTaskForm.appendChild(submitButton);
+
+                taskDetailsCard.appendChild(newTaskForm);
+
+                newTaskForm.addEventListener("submit", () => {
+                    projects[index].tasks[taskIndex].name = taskNameInput.value;
+                    projects[index].tasks[taskIndex].deadline =
+                        taskDateInput.value;
+                    projects[index].tasks[taskIndex].priority =
+                        taskPriorityInput.value;
+                    newTaskForm.reset();
+                    renderTasks(index);
+                });
+            }
         });
     }
 
