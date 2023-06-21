@@ -17,10 +17,21 @@ export default function createProject(name) {
 
         addTask(task) {
             tasks.push(task);
+            this.sortTasks();
         },
 
         deleteTask(index) {
             tasks.splice(index, 1);
+            this.sortTasks();
+        },
+
+        sortTasks() {
+            tasks.sort((a, b) => {
+                const date1 = new Date(a.deadline);
+                const date2 = new Date(b.deadline);
+
+                return date1 - date2;
+            });
         },
     };
 }

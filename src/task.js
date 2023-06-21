@@ -2,6 +2,7 @@ export default function createTask(name, date, priority) {
     let taskName = name;
     let taskDueDate = date;
     let taskPriority = priority;
+    const completed = false;
 
     return {
         get name() {
@@ -26,6 +27,13 @@ export default function createTask(name, date, priority) {
 
         set deadline(newDate) {
             taskDueDate = newDate;
+        },
+
+        statusToggle() {
+            if (completed) {
+                return false;
+            }
+            return true;
         },
     };
 }
