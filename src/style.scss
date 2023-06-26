@@ -7,3 +7,11 @@
 .hide {
     display: none;
 }
+
+.completed {
+    .task-name {
+        text-decoration: line-through;
+        font-style: italic;
+        color: gray;
+    }
+}

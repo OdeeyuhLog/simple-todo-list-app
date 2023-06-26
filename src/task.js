@@ -1,8 +1,8 @@
-export default function createTask(name, date, priority) {
+export default function createTask(projNumber, name, date, priority) {
     let taskName = name;
     let taskDueDate = date;
     let taskPriority = priority;
-    const completed = false;
+    let completed = false;
 
     return {
         get name() {
@@ -29,11 +29,16 @@ export default function createTask(name, date, priority) {
             taskDueDate = newDate;
         },
 
-        statusToggle() {
-            if (completed) {
-                return false;
-            }
-            return true;
+        set completed(status) {
+            completed = status;
+        },
+
+        get completed() {
+            return completed;
+        },
+
+        get projNum() {
+            return projNumber;
         },
     };
 }
