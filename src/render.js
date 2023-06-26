@@ -1,4 +1,4 @@
-import format from "date-fns/format";
+import { format, isFuture, parseISO } from "date-fns";
 import createProject from "./project";
 import createTask from "./task";
 import "./style.scss";
@@ -125,9 +125,11 @@ export default function renderApp() {
                 }
 
                 if (e.target.dataset.type === "upcoming") {
+                    renderUpcoming();
                 }
 
                 if (e.target.dataset.type === "completed") {
+                    renderCompleted();
                 }
             });
         });
@@ -471,13 +473,21 @@ export default function renderApp() {
                 accumulator,
                 task.name,
                 task.deadline,
+                task.priority,
                 task.completed
             );
             accumulator += 1;
         });
     }
 
-    function renderTaskToDOM(projIndex, taskIndex, name, date, status) {
+    function renderTaskToDOM(
+        projIndex,
+        taskIndex,
+        name,
+        date,
+        priority,
+        status
+    ) {
         const taskContainer = document.getElementById("render-tasks");
 
         const taskCard = document.createElement("div");
@@ -492,6 +502,7 @@ export default function renderApp() {
         statusCheckbox.type = "checkbox";
         statusCheckbox.name = "status-checkbox";
         statusCheckbox.checked = status;
+
         taskCard.appendChild(statusCheckbox);
 
         const taskName = document.createElement("p");
@@ -575,8 +586,6 @@ export default function renderApp() {
             const taskPriorityInput = document.createElement("select");
             taskPriorityInput.name = "newPriorityInput";
             taskPriorityInput.className = "new-task-priority-input";
-            taskPriorityInput.value =
-                currentProjects[projIndex].tasks[taskIndex].priority;
 
             const priorityOption2 = document.createElement("option");
             priorityOption2.value = "low";
@@ -592,6 +601,8 @@ export default function renderApp() {
             priorityOption4.value = "high";
             priorityOption4.textContent = "High";
             taskPriorityInput.appendChild(priorityOption4);
+
+            taskPriorityInput.value = priority;
 
             newTaskForm.appendChild(taskPriorityInput);
 
@@ -642,6 +653,66 @@ export default function renderApp() {
         currentProjects.forEach((project) => {
             project.tasks.forEach((task) => {
                 if (task.deadline === today) {
+                    renderTaskToDOM(
+                        task.projNum,
+                        project.tasks.indexOf(task),
+                        task.name,
+                        task.deadline,
+                        task.completed
+                    );
+                }
+            });
+        });
+    }
+
+    function renderUpcoming() {
+        const taskPage = document.getElementById("content");
+        taskPage.innerHTML = "";
+
+        const listHeader = document.createElement("h2");
+        listHeader.id = "list-header";
+        listHeader.textContent = "Upcoming";
+        taskPage.appendChild(listHeader);
+
+        const renderTasksContainer = document.createElement("div");
+        renderTasksContainer.id = "render-tasks";
+        taskPage.appendChild(renderTasksContainer);
+
+        renderTasksContainer.innerHTML = "";
+
+        currentProjects.forEach((project) => {
+            project.tasks.forEach((task) => {
+                if (isFuture(parseISO(task.deadline))) {
+                    renderTaskToDOM(
+                        task.projNum,
+                        project.tasks.indexOf(task),
+                        task.name,
+                        task.deadline,
+                        task.completed
+                    );
+                }
+            });
+        });
+    }
+
+    function renderCompleted() {
+        const taskPage = document.getElementById("content");
+        taskPage.innerHTML = "";
+
+        const listHeader = document.createElement("h2");
+        listHeader.id = "list-header";
+        listHeader.textContent = "Completed";
+        taskPage.appendChild(listHeader);
+
+        const renderTasksContainer = document.createElement("div");
+        renderTasksContainer.id = "render-tasks";
+        taskPage.appendChild(renderTasksContainer);
+
+        renderTasksContainer.innerHTML = "";
+
+        currentProjects.forEach((project) => {
+            project.tasks.forEach((task) => {
+                if (task.completed) {
                     renderTaskToDOM(
                         task.projNum,
                         project.tasks.indexOf(task),
