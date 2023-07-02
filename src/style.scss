@@ -1,11 +1,405 @@
+@import url("https://fonts.googleapis.com/css2?family=Hind&family=Montserrat:wght@600&display=swap");
+
+$title-font: "Montserrat", sans-serif;
+$text-font: "Hind", sans-serif;
+$low: #6f975c;
+$medium: #d2d462;
+$high: #ff6361;
+$normal: #0073cf;
+$focus: #dfe6e9;
+
 * {
     margin: 0;
     padding: 0;
-    box-sizing: content-box;
+    font: inherit;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+img,
+picture,
+svg,
+video {
+    display: block;
+    max-width: 100%;
+}
+
+body {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 8% 1fr;
+}
+
+input,
+select {
+    &:hover {
+        background-color: #dfe6e9;
+    }
+}
+
+button,
+input[type="checkbox"],
+input[type="submit"],
+select {
+    cursor: pointer;
+}
+
+button {
+    border: 0;
+    outline: 0;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 0.15em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &::after {
+        content: "✔";
+        font-size: 0.95em;
+        color: white;
+        display: none;
+    }
+
+    &:checked {
+        &::after {
+            display: block;
+        }
+    }
+}
+
+#app-title {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left;
+    align-items: center;
+    gap: 5px;
+    padding: 1.5rem;
+    font-size: 1.5em;
+    font-family: $title-font;
+    border-bottom: 1px dashed gray;
+}
+
+#container {
+    display: grid;
+    grid-template-columns: 15% 1fr;
+}
+
+#side-bar {
+    display: grid;
+    grid-template-rows: 31% 1fr;
+    padding: 0.5rem;
+    border-right: 1.75px dashed gray;
+    font-family: $text-font;
+
+    #primary-buttons {
+        display: flex;
+        flex-direction: column;
+        font-family: $text-font;
+        gap: 0.3rem;
+        padding: 0.4rem;
+        border-bottom: 2px solid #b2bec3;
+
+        .side-bar-button {
+            outline: 0;
+            border: 0;
+            background-color: transparent;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: start;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.75rem;
+            border-radius: 10px;
+            transition: 0.075s linear;
+
+            &:hover {
+                background-color: $focus;
+            }
+        }
+    }
+
+    #projects-container {
+        display: grid;
+        grid-template-rows: 5% 1fr;
+        row-gap: 8px;
+        padding: 0.5rem;
+        #task-header {
+            display: flex;
+            justify-content: space-between;
+            h2 {
+                font-family: $title-font;
+                font-size: 1.2em;
+            }
+
+            #create-project {
+                height: 1.5rem;
+                width: 1.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: black;
+                color: white;
+                outline: 0;
+                border: 0;
+                border-radius: 3px;
+                transition: 0.3s linear;
+                justify-self: right;
+
+                &:hover {
+                    background-color: $low;
+                }
+            }
+
+            #input-project {
+                gap: 5px;
+                max-height: 1.5rem;
+                align-items: center;
+                grid-column-start: 1;
+                grid-column-end: 3;
+                display: flex;
+                justify-content: space-around;
+                * {
+                    max-height: 1.5rem;
+                }
+                button {
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.8em;
+                    font-weight: bold;
+                    padding: 3px;
+                    border: 0;
+                    outline: 0;
+                    background-color: transparent;
+                    transition: border color 150ms linear;
+                    border-radius: 5px;
+                    border: 1.5px solid white;
+                }
+
+                #add-project {
+                    &:hover {
+                        border: 1.5px solid #6f975c;
+                        color: #6f975c;
+                    }
+                }
+
+                #cancel-input {
+                    &:hover {
+                        border: 1.5px solid #ff6361;
+                        color: #ff6361;
+                    }
+                }
+
+                input {
+                    border: 2px solid black;
+                    width: 9rem;
+
+                    outline: 0;
+                    border-radius: 5px;
+                    padding: 0.3rem;
+                }
+            }
+        }
+    }
+
+    #show-projects {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        .project-card {
+            cursor: pointer;
+            padding: 0.5rem;
+            display: grid;
+            grid-template-columns: 1fr 15% 15%;
+            column-gap: 3px;
+            border: 1.4px solid white;
+            border-radius: 8px;
+            box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+                rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+            transition: 300ms ease-in;
+
+            &:hover {
+                background-color: #dfe6e9;
+                border-color: black;
+            }
+
+            & > button {
+                background-color: transparent;
+                transition: hover 300ms ease;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .edit-button {
+                &:hover {
+                    svg {
+                        filter: invert(30%) sepia(67%) saturate(3529%)
+                            hue-rotate(191deg) brightness(91%) contrast(101%);
+                    }
+                }
+            }
+
+            .delete-project {
+                &:hover {
+                    svg {
+                        filter: invert(50%) sepia(50%) saturate(7457%)
+                            hue-rotate(337deg) brightness(95%) contrast(115%);
+                    }
+                }
+            }
+
+            input[type="text"] {
+                width: 150px;
+                border: 2px solid black;
+                border-radius: 5px;
+                padding: 0 0.5rem;
+                margin-right: 0.5rem;
+
+                & + button {
+                    font-size: 1.25em;
+                    font-weight: 700;
+                    transition: 300ms linear;
+
+                    &:hover {
+                        color: $low;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    padding: 3rem;
+    padding-left: 10rem;
+    gap: 0.7rem;
+
+    h2 {
+        font-size: 1.8em;
+        text-transform: capitalize;
+        font-family: $title-font;
+    }
+
+    form {
+        display: grid;
+        grid-template-columns: 1fr 25% 25% 20%;
+        column-gap: 0.3rem;
+        padding: 0.3rem 0.4rem;
+        font-family: $text-font;
+        font-size: 0.85em;
+
+        input[type="text"],
+        input[type="date"],
+        input[type="submit"],
+        select {
+            border: 2px solid black;
+            border-radius: 8px;
+            padding: 0.3rem;
+            transition: 300ms ease;
+        }
+
+        select {
+            background-color: transparent;
+        }
+
+        input[type="submit"] {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            &:hover {
+                border-color: $low;
+                color: $low;
+                background-color: $focus;
+            }
+        }
+    }
+
+    #render-tasks {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        gap: 10px;
+
+        .task-card {
+            width: 800px;
+            display: grid;
+            grid-template-columns: 30px 1fr 70px 50px;
+            justify-content: center;
+            align-items: center;
+            column-gap: 10px;
+            padding: 0.5rem 0.8rem;
+            box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+                rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+            border-radius: 8px;
+            font-family: $text-font;
+
+            .newTaskDataInput {
+                width: 775px;
+                display: grid;
+                grid-template-columns: 1fr 200px 100px 60px;
+            }
+
+            .manage-task-controls {
+                display: flex;
+                gap: 8px;
+
+                button {
+                    border-radius: 5px;
+                    background-color: white;
+                }
+
+                .task-edit-button,
+                .task-delete-button {
+                    transition: 300ms ease-in;
+                }
+
+                .task-edit-button {
+                    &:hover {
+                        svg {
+                            filter: invert(30%) sepia(67%) saturate(3529%)
+                                hue-rotate(191deg) brightness(91%)
+                                contrast(101%);
+                        }
+                    }
+                }
+
+                .task-delete-button {
+                    &:hover {
+                        svg {
+                            filter: invert(50%) sepia(50%) saturate(7457%)
+                                hue-rotate(337deg) brightness(95%)
+                                contrast(115%);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .hide {
+    visibility: hidden;
     display: none;
+    height: 0px;
 }
 
 .completed {
@@ -14,4 +408,42 @@
         font-style: italic;
         color: gray;
     }
+}
+
+.priority-output {
+    height: 1.3rem;
+    width: 1.3rem;
+    border-radius: 50%;
+}
+
+.default {
+    border: 0.15em solid $normal;
+    &:checked {
+        background-color: $normal;
+    }
+}
+
+.low {
+    border: 0.15em solid $low;
+    &:checked {
+        background-color: $low;
+    }
+}
+
+.medium {
+    border: 0.15em solid $medium;
+    &:checked {
+        background-color: $medium;
+    }
+}
+
+.high {
+    border: 0.15em solid $high;
+    &:checked {
+        background-color: $high;
+    }
+}
+
+.activeTile {
+    background-color: $focus;
 }
