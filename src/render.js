@@ -4,11 +4,17 @@ import createTask from "./task";
 import "./style.scss";
 
 export default function renderApp() {
-    const currentProjects = [];
-    currentProjects.push(createProject("Inbox"));
-
+    let currentProjects = [];
+    if (localStorage.getItem("projectsList")) {
+        currentProjects = JSON.parse(localStorage.getItem("projectsList"));
+        console.log(currentProjects);
+    } else {
+        currentProjects.push(createProject("Inbox"));
+        localStorage.setItem("projectsList", JSON.stringify(currentProjects));
+    }
     function addProject(name) {
         currentProjects.push(createProject(name));
+        localStorage.setItem("projectsList", JSON.stringify(currentProjects));
     }
 
     function renderHome() {
@@ -175,6 +181,8 @@ export default function renderApp() {
         displayProjectInput();
         handleProjectButtonsClick();
         checkActiveTile();
+        renderProjects();
+        renderInbox();
     }
 
     function handlePrimaryButtonsClick() {
@@ -273,7 +281,18 @@ export default function renderApp() {
 
             const taskObject = createTask(0, taskName, taskDate, taskPriority);
 
-            currentProjects[0].addTask(taskObject);
+            currentProjects[0].tasks.push(taskObject);
+            currentProjects[0].tasks.sort((a, b) => {
+                const date1 = new Date(a.deadline);
+                const date2 = new Date(b.deadline);
+
+                return date1 - date2;
+            });
+            localStorage.setItem(
+                "projectsList",
+                JSON.stringify(currentProjects)
+            );
+
             renderTasks(0);
             taskInputForm.reset();
             prioritySelect.value = "default";
@@ -477,6 +496,10 @@ export default function renderApp() {
 
             deleteButton.addEventListener("click", (e) => {
                 currentProjects.splice(projectCard.dataset.value, 1);
+                localStorage.setItem(
+                    "projectsList",
+                    JSON.stringify(currentProjects)
+                );
                 e.stopPropagation();
                 renderProjects();
                 renderInbox();
@@ -497,6 +520,12 @@ export default function renderApp() {
                     const updatedProjectName = projectNameInput.value;
                     currentProjects[projectCard.dataset.value].name =
                         updatedProjectName;
+
+                    localStorage.setItem(
+                        "projectsList",
+                        JSON.stringify(currentProjects)
+                    );
+
                     e.stopPropagation();
 
                     renderProjects();
@@ -598,9 +627,23 @@ export default function renderApp() {
                         taskPriority
                     );
 
-                    currentProjects[projectCard.dataset.value].addTask(
+                    currentProjects[projectCard.dataset.value].tasks.push(
                         taskObject
                     );
+                    currentProjects[projectCard.dataset.value].tasks.sort(
+                        (a, b) => {
+                            const date1 = new Date(a.deadline);
+                            const date2 = new Date(b.deadline);
+
+                            return date1 - date2;
+                        }
+                    );
+
+                    localStorage.setItem(
+                        "projectsList",
+                        JSON.stringify(currentProjects)
+                    );
+
                     renderTasks(projectCard.dataset.value);
                     taskInputForm.reset();
                     prioritySelect.value = "default";
@@ -709,6 +752,10 @@ export default function renderApp() {
         // Event Listener -- Utilities for Task Cards
         taskDeleteButton.addEventListener("click", () => {
             currentProjects[projIndex].tasks.splice(taskIndex, 1);
+            localStorage.setItem(
+                "projectsList",
+                JSON.stringify(currentProjects)
+            );
             renderTasks(projIndex);
         });
 
@@ -772,7 +819,17 @@ export default function renderApp() {
                 currentProjects[projIndex].tasks[taskIndex].priority =
                     taskPriorityInput.value;
 
-                currentProjects[projIndex].sortTasks();
+                currentProjects[projIndex].tasks.sort((a, b) => {
+                    const date1 = new Date(a.deadline);
+                    const date2 = new Date(b.deadline);
+
+                    return date1 - date2;
+                });
+                localStorage.setItem(
+                    "projectsList",
+                    JSON.stringify(currentProjects)
+                );
+
                 renderTasks(projIndex);
             });
         });
@@ -781,6 +838,10 @@ export default function renderApp() {
             currentProjects[projIndex].tasks[taskIndex].completed =
                 statusCheckbox.checked;
             taskCard.classList.toggle("completed");
+            localStorage.setItem(
+                "projectsList",
+                JSON.stringify(currentProjects)
+            );
         });
 
         taskContainer.append(taskCard);
