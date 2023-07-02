@@ -174,6 +174,7 @@ export default function renderApp() {
         handlePrimaryButtonsClick();
         displayProjectInput();
         handleProjectButtonsClick();
+        checkActiveTile();
     }
 
     function handlePrimaryButtonsClick() {
@@ -344,6 +345,41 @@ export default function renderApp() {
 
     function checkActiveTile() {
         const sideBar = document.getElementById("side-bar");
+        sideBar.addEventListener("click", (e) => {
+            if (e.target && e.target.matches("button.side-bar-button")) {
+                const projectCards = document.querySelectorAll(".project-card");
+                const sideBarButtons =
+                    document.querySelectorAll(".side-bar-button");
+
+                projectCards.forEach((card) => {
+                    card.classList.remove("activeTile");
+                });
+
+                sideBarButtons.forEach((button) => {
+                    button.classList.remove("activeTile");
+                });
+
+                e.target.classList.add("activeTile");
+            }
+
+            if (e.target && e.target.closest("div.project-card")) {
+                const projectCards = document.querySelectorAll(".project-card");
+                const sideBarButtons =
+                    document.querySelectorAll(".side-bar-button");
+
+                projectCards.forEach((card) => {
+                    card.classList.remove("activeTile");
+                });
+
+                sideBarButtons.forEach((button) => {
+                    button.classList.remove("activeTile");
+                });
+
+                e.target
+                    .closest("div.project-card")
+                    .classList.add("activeTile");
+            }
+        });
     }
 
     function renderProjects() {

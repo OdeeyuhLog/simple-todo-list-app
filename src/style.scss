@@ -133,8 +133,8 @@ input[type="checkbox"] {
     #projects-container {
         display: grid;
         grid-template-rows: 5% 1fr;
-        row-gap: 8px;
-        padding: 0.5rem;
+        row-gap: 25px;
+        padding: 1rem;
         #task-header {
             display: flex;
             justify-content: space-between;
@@ -445,5 +445,5 @@ input[type="checkbox"] {
 }
 
 .activeTile {
-    background-color: $focus;
+    background-color: $focus !important;
 }
