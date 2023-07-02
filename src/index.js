@@ -1,4 +1,4 @@
-import renderApp from "./render";
+import renderApp from "./app";
 
 const todo = renderApp();
 

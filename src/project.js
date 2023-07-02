@@ -1,4 +1,4 @@
-export default function createProject(name) {
+function createProject(name) {
     const tasks = [];
     let projectName = name;
 
@@ -35,3 +35,11 @@ export default function createProject(name) {
         },
     };
 }
+
+const storedProjectsList = localStorage.getItem("projectsList");
+
+const currentProjects = storedProjectsList
+    ? JSON.parse(storedProjectsList)
+    : [createProject("Inbox")];
+
+export { createProject, currentProjects };
